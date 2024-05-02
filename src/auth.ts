@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { User } from "./models/userModel";
 import bcrypt from "bcryptjs";
+import { connectDB } from "./lib/utils";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -34,6 +35,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         //Connection to Database
 
+        await connectDB();
+
         const user = await User.findOne({ email }).select("+password");
 
         if (!user) {
@@ -60,4 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  pages: {
+    signIn: "/login",
+  },
 });
